@@ -1,4 +1,3 @@
-// services/huggingface.ts
 import { HfInference } from '@huggingface/inference';
 
 const hf = new HfInference(process.env.NEXT_PUBLIC_HUGGING_FACE_API_TOKEN);
