@@ -12,13 +12,7 @@ interface Message {
   text: string;
   sender: "user" | "bot";
 }
-interface EmojiClickData {
-  emoji: string;
-  names: string[];
-  unified: string;
-  originalUnified: string;
-  activeSkinTone: string;
-}
+
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
