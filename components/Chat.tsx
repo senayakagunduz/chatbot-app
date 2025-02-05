@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { generateResponse } from "../services/huggingface";
+import { generateResponse, speechToText } from "../services/huggingface";
 import { Bot, Mic, MicOff, User } from "lucide-react";
 import EmojiPicker from "emoji-picker-react";
 import { Button } from "./ui/button";
@@ -12,7 +12,13 @@ interface Message {
   text: string;
   sender: "user" | "bot";
 }
-
+interface EmojiClickData {
+  emoji: string;
+  names: string[];
+  unified: string;
+  originalUnified: string;
+  activeSkinTone: string;
+}
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
@@ -100,10 +106,12 @@ const Chat: React.FC = () => {
 
   const handleVoiceInput = async (audioBlob: Blob) => {
     try {
-      const audioBlob = new Blob(); // Example
-      console.log(audioBlob); // Use it somewhere
-      // Ses dosyasını text'e çevirme işlemi burada yapılacak
-      // Şimdilik boş bırakıyoruz, bir sonraki adımda implement edeceğiz
+      // Ses verisini text'e çevirme
+      const text = await speechToText(audioBlob); // speechToText fonksiyonunu huggingface.ts'den import edin
+      if (text) {
+        setInputValue(text);
+        handleSendMessage();
+      }
     } catch (error) {
       console.error("Ses işleme hatası:", error);
     }
@@ -225,7 +233,7 @@ const Chat: React.FC = () => {
           {showEmojiPicker && (
             <div className="absolute bottom-20 right-4">
               <EmojiPicker
-                onEmojiClick={(emojiObject: any) => {
+                onEmojiClick={(emojiObject) => {
                   setInputValue((prev) => prev + emojiObject.emoji);
                   setShowEmojiPicker(false);
                 }}
